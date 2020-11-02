@@ -15,7 +15,7 @@
 """Tests for pegasus.params.registry."""
 
 from absl.testing import absltest
-from pegasus.params import registry
+from . import registry
 
 
 class RegistryTest(absltest.TestCase):

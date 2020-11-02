@@ -5,5 +5,9 @@ class test():
         print('called ', y)
 
 
-z = test()
-z(300)
+# z = test()
+# z(300)
+
+x : int = 5
+
+print(x)

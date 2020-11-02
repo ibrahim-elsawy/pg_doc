@@ -20,8 +20,8 @@ Parsers return two values:
   shapes: A map from feature name to feature shape (as an int list).
 """
 
-from pegasus.data import utils
-from pegasus.ops import public_parsing_ops as parsing_ops
+from . import utils
+from ..ops import public_parsing_ops as parsing_ops
 import tensorflow as tf
 
 
@@ -61,7 +61,8 @@ def supervised_strings_parser(vocab_filename,
   shapes = {"inputs": [max_input_len], "targets": [max_target_len]}
   return parser, shapes
 
-
+#called in pegasus_params.hparams.parser -> used to clean data
+#prepare corpus for rouge algo
 def string_features_for_pretraining_parser(
     vocab_filename,
     encoder_type,
@@ -142,8 +143,18 @@ def string_features_for_pretraining_parser(
   del mode  # Unused.
 
   def parser(input_dic):
-    """Parser for string dict."""
+    """
+    Parser for string dict.for preprocessing corpus
+    Args:
+        input_dic(dictionary):
+    return:
+        output_dic(dictionary):
 
+    """
+
+
+    # parser_strategy: string.Pretraining objectives which define how sentences are selected.
+    # It can be: random, lead, rouge, greedy_rouge,continuous_rouge, hybrid, none.
     if parser_strategy not in [
         "random", "lead", "rouge", "greedy_rouge", "continuous_rouge", "hybrid",
         "none", "dynamic_rouge"

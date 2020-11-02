@@ -18,7 +18,7 @@ from data import infeed
 # from pegasus.params import all_params  # pylint: disable=unused-import
 from params import all_params
 from ..params import estimator_utils
-from ..params import regi   stry
+from ..params import registry
 import tensorflow as tf #version 1.15.2
 
 flags = tf.flags

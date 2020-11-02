@@ -15,6 +15,6 @@
 """Master import for all params."""
 
 # pylint: disable=unused-import
-from pegasus.params import pegasus_params
-from pegasus.params import public_params
+from . import pegasus_params
+from . import public_params
 # pylint: enable=unused-import

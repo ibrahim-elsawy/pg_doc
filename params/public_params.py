@@ -15,13 +15,13 @@
 """Summarization params of baseline models for downstream datasets."""
 import functools
 
-from pegasus.data import parsers
-from pegasus.eval import estimator_metrics
-from pegasus.eval import text_eval
-from pegasus.models import transformer
-from pegasus.ops import public_parsing_ops
-from pegasus.params import pegasus_params
-from pegasus.params import registry
+from ..data import parsers
+from ..eval import estimator_metrics
+from ..eval import text_eval
+from ..models import transformer
+from ..ops import public_parsing_ops
+from . import pegasus_params
+from . import registry
 from tensorflow.contrib import training as contrib_training
 
 

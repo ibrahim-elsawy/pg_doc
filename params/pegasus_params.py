@@ -12,17 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Pegasus Params."""
+"""Pegasus Params.
+"""
 
 import functools
 
-from pegasus.data import parsers
-from pegasus.eval import estimator_metrics
-from pegasus.eval import text_eval
-from pegasus.models import transformer
-from pegasus.ops import public_parsing_ops
-from pegasus.params import registry
+from ..data import parsers
+from ..eval import estimator_metrics
+from ..eval import text_eval
+from ..models import transformer
+from ..ops import public_parsing_ops
+from ..params import registry
 from tensorflow.contrib import training as contrib_training
+
+
 
 # Shift of special tokens id in the vocab file.
 # I.e. the starting id of ordinary tokens in the vocab file.
@@ -31,10 +34,14 @@ LENGTH_BUCKET_START_ID = 20
 TASK_START_ID = 50
 
 
-@registry.register("pegasus_large")
+@registry.register("pegasus_large") #"pegasus_large" is the name stored in key of _registered_params:Dict
 def pegasus_large_params(param_overrides):
   """Params for PegasusLarge."""
 
+
+  # A HParams object holds hyperparameters used to build and train a model,
+  # such as the number of hidden units in a neural net layer or the learning rate to use when training.
+  # You first create a HParams object by specifying the names and values of the hyperparameters.
   hparams = contrib_training.HParams(
       train_pattern="tfds_transformed:common_crawl-train",
       dev_pattern="tfds_transformed:common_crawl-validation",
@@ -112,25 +119,28 @@ def pegasus_large_params(param_overrides):
       estimator_eval_metrics_fn=estimator_metrics.pretrain_eval_metrics_fn,
   )
 
-  if param_overrides:
-    hparams.parse(param_overrides)
+  if param_overrides: # "param_overrides" is CMD argument parsed in train.py file: string of extra update hyperparameters
+    hparams.parse(param_overrides) #update the hyperparameters in hparams with
+    # "param_overides"(String Comma separated list of name=value pairs e.g:param_overides="[name_of_hyperparamter=updated_value]")
+
 
   # Check values
   if (hparams.parser_mask_word_by_msk_token_prob +
       hparams.parser_mask_word_by_random_token_prob +
       hparams.parser_mask_word_by_intact_prob) != 1.:
     raise ValueError("The sum of rates of the three word masking options "
-                     "(MSK, random, intact) does not equal to 1.")
+                     "(MSK, random, intact) does not equal to 1.") #mask_2 for encoder
   if (hparams.parser_mask_sentence_by_msk_token_prob +
       hparams.parser_mask_sentence_by_random_sentence_prob +
       hparams.parser_mask_sentence_by_intact_prob +
       hparams.parser_mask_sentence_by_remove_prob) != 1.:
     raise ValueError("The sum of rates of the four sentence masking options "
-                     "(MSK, random, intact, skip) does not equal to 1.")
+                     "(MSK, random, intact, skip) does not equal to 1.") #mask_1 for sentance gap decoder
   hparams.encoder = public_parsing_ops.create_text_encoder(
-      hparams.encoder_type, hparams.vocab_filename)
+      hparams.encoder_type, hparams.vocab_filename)#vocab_filename_dir:"pegasus/ops/testdata/sp_test.model"
+                                                    # encoder_type: "sentencepiece_newline"
   hparams.parser = functools.partial(
-      parsers.string_features_for_pretraining_parser,
+      parsers.string_features_for_pretraining_parser, # string_features_for_pretraining_parser -> parser function, shapes
       hparams.vocab_filename,
       hparams.encoder_type,
       hparams.max_input_len,
@@ -162,6 +172,9 @@ def pegasus_large_params(param_overrides):
       length_bucket_max_id=TASK_START_ID - 1,
       add_task_id=hparams.add_task_id,
       task_start_id=TASK_START_ID)
+  #functools.partial -> Return a new partial object which when called will behave like func called with the positional
+  # arguments args and keyword arguments keywords.
+  # If more arguments are supplied to the call, they are appended to args
   hparams.model = functools.partial(
       transformer.TransformerEncoderDecoderModel, hparams.encoder.vocab_size,
       hparams.hidden_size, hparams.filter_size, hparams.num_heads,
