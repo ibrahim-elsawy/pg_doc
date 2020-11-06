@@ -15,7 +15,7 @@
 """Embedding layers.
 
 Notations:
-  B: batch_size, I: max_input_len, D: hidden_size, V: vocab_size
+  B: batch_size, I: max_input_len: 0f sentance, D: hidden_size, V: vocab_size
 """
 # 
 # pylint: disable=invalid-name
@@ -41,7 +41,7 @@ class Embedding(object):
   def _ids_to_weights(self, ids_BxI):
     """Maps IDs to embedding weights."""
     weights_BxIxD = tf.nn.embedding_lookup(self.weights_VxD, ids_BxI)
-    weights_BxIxD *= self._hidden_size**0.5
+    weights_BxIxD *= self._hidden_size**0.5# ????????????????????????????
     return weights_BxIxD
 
   def _weights_to_logits(self, states_BxIxD):
@@ -61,6 +61,7 @@ class Embedding(object):
       embeddings_VxD = tf.get_variable(
           self._name, [self._vocab_size, self._hidden_size],
           initializer=tf.random_normal_initializer(
-              stddev=self._hidden_size**-0.5, dtype=self._dtype),
+              stddev=self._hidden_size**-0.5, dtype=self._dtype),#create embedding vector table and all elements of tensor
+        #are normalizied with sqrt(dk)
           dtype=self._dtype)
     return embeddings_VxD

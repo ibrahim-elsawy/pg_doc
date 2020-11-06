@@ -28,6 +28,9 @@ import tensorflow as tf
 from tensorflow.contrib import layers as contrib_layers
 
 
+#T0_DO_List
+#[x]-> s_BxIxD undertand flow of s_BxIxD in graph
+
 class TransformerBlock(object):
   """Transformer block.
 
@@ -64,10 +67,11 @@ class TransformerBlock(object):
       y_BxIxD = self._self_attn_layer(
           y_BxIxD, bias_BxIxI, training, cache=cache, decode_i=decode_i)
       s_BxIxD += self._dropout_fn(y_BxIxD, training)
+
     if memory_BxMxD is not None:
       with tf.variable_scope("memory_attention"):
         y_BxIxD = contrib_layers.layer_norm(s_BxIxD, begin_norm_axis=2)
-        y_BxIxD = self._attn_layer(y_BxIxD, memory_BxMxD, bias_BxIxM, training)
+        y_BxIxD = self._attn_layer(y_BxIxD, memory_BxMxD, bias_BxIxM, training)#memory_BxMxD(tensors):parsed from specific hidden layers in encoder block *********
         s_BxIxD += self._dropout_fn(y_BxIxD, training)
     with tf.variable_scope("ffn"):
       y_BxIxD = contrib_layers.layer_norm(s_BxIxD, begin_norm_axis=2)

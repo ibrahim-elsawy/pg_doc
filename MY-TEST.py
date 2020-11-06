@@ -5,9 +5,7 @@ class test():
         print('called ', y)
 
 
-# z = test()
-# z(300)
 
-x : int = 5
-
-print(x)
+import tensorflow as tf
+D = 3
+print(tf.matrix_band_part(tf.ones([D, D], -1, 0)))

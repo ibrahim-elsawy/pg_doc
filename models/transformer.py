@@ -28,6 +28,7 @@ and targets ids.
 
 #TO_DO
 #Public_Parsing_ops.py ---> ids
+# understand flow of features
 
 
 
@@ -45,7 +46,7 @@ class TransformerEncoderDecoderModel(base.BaseModel):
   """Transformer encoder+decoder.
 
   Notations:
-    B: batch_size, I: max_input_len, T: max_target/decode_len, D: hidden_size
+    B: batch_size, I: max_input_len, T: max_targetdecode_len, D: hidden_size
     V: vocab_size
   """
 
@@ -63,7 +64,7 @@ class TransformerEncoderDecoderModel(base.BaseModel):
         x, dropout, noise_shape=[x.shape[0], 1, x.shape[2]]) if training else x
     self._vocab_size = vocab_size
     self._num_heads = num_heads
-    self._label_smoothing = label_smoothing
+    self._label_smoothing = label_smoothing #for overfitting problem
     self._decoder_scope_name = "decoder"
 
   def _encode(self, features, training):
@@ -77,7 +78,9 @@ class TransformerEncoderDecoderModel(base.BaseModel):
                                              states_BxIxD, inputs_bias_Bx1xI,
                                              None, None)
       states_BxIxD = contrib_layers.layer_norm(states_BxIxD, begin_norm_axis=2)
-    return {"memory": states_BxIxD, "memory_bias": inputs_bias_Bx1xI}
+    return {"memory": states_BxIxD, "memory_bias": inputs_bias_Bx1xI}#memory(output of stacked layers of encoder):
+    # used in attention.py -> (batch -> has no_of_sentance -> each sentnace has matrix for embedding where every word
+    # in rows has embedding vector in columns)
 
   def __call__(self, features, training):
     """Create model.

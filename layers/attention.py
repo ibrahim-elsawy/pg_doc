@@ -31,6 +31,7 @@ def split_heads(tensor_BxIxD, num_heads):
   return tensor_BxHxIxD
 
 
+#called in transformer.py
 class Attention(object):
   """Multihead scaled dot product attention."""
 
@@ -49,7 +50,7 @@ class Attention(object):
 
   def __call__(self,
                input_BxIxDi,
-               memory_BxMxDi,
+               memory_BxMxDi,# Mx(tensor):memeory dim for one sentance in one batch *******
                bias_BxIxM,
                training,
                cache=None,
@@ -59,7 +60,7 @@ class Attention(object):
     dtype = memory_BxMxDi.dtype
 
     q_BxHxIxDh = split_heads(self._q_layer(input_BxIxDi), H)
-    q_BxHxIxDh *= (D // H)**-0.5
+    q_BxHxIxDh *= (D // H)**-0.5 # normalization const. in formula of atten. "sqrt(dk)"
     k_BxHxMxDh = split_heads(self._k_layer(memory_BxMxDi), H)
     v_BxHxMxDh = split_heads(self._v_layer(memory_BxMxDi), H)
 
@@ -101,9 +102,10 @@ def ids_to_bias(ids_BxI, dtype=tf.float32, padding_id=0):
   return bias_Bx1xI
 
 
+
 def upper_triangle_bias(D, dtype=tf.float32):
   """Create a upper triangle matrix for decoding bias."""
   upper_triangle_DxD = 1 - tf.matrix_band_part(
       tf.ones([D, D], dtype=dtype), -1, 0)
-  tensor_1xDxD = tf.expand_dims(upper_triangle_DxD * dtype.min, axis=0)
+  tensor_1xDxD = tf.expand_dims(upper_triangle_DxD * dtype.min, axis=0)#add extra dim in axis= 0 for batch *****
   return tensor_1xDxD

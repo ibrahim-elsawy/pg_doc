@@ -14,9 +14,9 @@
 
 """Binary to train a model and to write eval summaries during training."""
 
-from data import infeed
+from ..data import infeed
 # from pegasus.params import all_params  # pylint: disable=unused-import
-from params import all_params
+from ..params import all_params
 from ..params import estimator_utils
 from ..params import registry
 import tensorflow as tf #version 1.15.2
